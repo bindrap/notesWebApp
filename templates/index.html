@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoteBot - City of Windsor</title>
+    <!-- Favicon -->
+    <link rel="icon" href="/static/images/windsorCoatofArms.png" type="image/png">
+    <style>
+        /* Reset and background */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: url('/static/images/windsorSunset.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Top Left Zone (Logo + Preview) */
+        .top-left-zone {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 300px;
+            z-index: 100;
+        }
+
+        .logo-top {
+            width: 130px;
+            border-radius: 8px;
+            opacity: 0.95;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            display: block;
+            margin-bottom: 15px;
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+        }
+
+        .logo-top:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        /* File Preview Panel */
+        .file-preview-panel {
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            padding: 15px;
+            font-size: 14px;
+            line-height: 1.5;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .file-preview-panel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .file-preview {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .file-preview img, .file-preview pre {
+            max-width: 100%;
+            border-radius: 6px;
+            margin: 5px 0;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 800px;
+            margin: 40px auto;
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 12px;
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.18);
+            padding: 30px;
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .main-content:hover {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #003366;
+            padding-bottom: 15px;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #003366;
+            font-size: 2.2em;
+        }
+
+        .header p {
+            margin: 8px 0 0;
+            color: #005b9f;
+            font-weight: 500;
+        }
+
+        /* Upload area */
+        .upload-area {
+            border: 2px dashed #003366;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            background: rgba(240, 245, 255, 0.6);
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            background: rgba(230, 240, 255, 0.7);
+            border-color: #002244;
+        }
+
+        .upload-area h3 {
+            margin: 0 0 10px;
+            color: #003366;
+        }
+
+        .upload-area p {
+            color: #555;
+            margin: 8px 0;
+        }
+
+        .upload-area .note {
+            font-size: 14px;
+            color: #1a5c9e;
+            font-style: italic;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 51, 102, 0.2);
+        }
+
+        /* Button */
+        .btn {
+            background: #003366;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #002244;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Status Panel */
+        .status-panel {
+            background: #e8f4fd;
+            border: 1px solid #b3d9ff;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        /* Results */
+        .results {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .results:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0 0 10px 0;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 8px;
+            color: #003366;
+        }
+
+        .results-header h2 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+
+        .download-btn {
+            background: #28a745;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 14px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .download-btn:hover {
+            background: #218838;
+            transform: scale(1.05);
+        }
+
+        pre {
+            background: #f0f0f0;
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            transition: all 0.2s ease;
+        }
+
+        pre:hover {
+            background: #e8f4fd;
+            border-color: #b3d9ff;
+        }
+
+        code {
+            font-family: 'Consolas', 'Courier New', monospace;
+        }
+
+        .error {
+            color: #d32f2f;
+        }
+
+        .capability-note {
+            font-size: 13px;
+            color: #555;
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .capability-note:hover {
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Bottom Right Logo */
+        .logo-bottom {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 70px;
+            border-radius: 50%;
+            opacity: 0.95;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .logo-bottom:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Left Zone: Logo + Preview Below -->
+    <div class="top-left-zone">
+        <img src="/static/images/windsorLogo.png" alt="City of Windsor Logo" class="logo-top">
+        <div class="file-preview-panel">
+            <h4>📄 Uploaded File</h4>
+            <div id="filePreview" class="file-preview">
+                <em>No file uploaded yet.</em>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Right Coat of Arms -->
+    <img src="/static/images/windsorCoatofArms.png" alt="City of Windsor Coat of Arms" class="logo-bottom">
+
+    <!-- Main Content (wider, centered) -->
+    <div class="main-content">
+        <div class="header">
+            <h1>📝 NoteBot</h1>
+            <p>City of Windsor - AI-Powered Note Enhancement Tool</p>
+        </div>
+
+        <div class="upload-area">
+            <h3>📤 Upload Your Notes</h3>
+            <p>Supports: Images (jpg/png), PDF, DOCX, TXT</p>
+            <form id="uploadForm" enctype="multipart/form-data">
+                <input type="file" name="files" id="fileInput" accept="image/*,.txt,.doc,.docx,.pdf">
+                <br><br>
+                <button type="submit" class="btn">Enhance Notes with AI</button>
+            </form>
+
+            <div class="note">
+                <strong>How it works:</strong> Upload a photo or document.<br>
+                NoteBot uses AI to extract and enhance your notes into structured markdown.
+            </div>
+        </div>
+
+        <!-- Status Panel -->
+        <div id="statusPanel" class="status-panel" style="display: none;">
+            <p><strong>Status:</strong></p>
+            <div id="progress-steps">
+                <p id="step-upload">⚪ Waiting to upload...</p>
+                <p id="step-extract">⚪ Extracting text...</p>
+                <p id="step-ai">⚪ Sending to AI...</p>
+                <p id="step-done">⚪ Finalizing...</p>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div id="results" class="results" style="display: none;">
+            <div class="results-header">
+                <h2>✨ Enhanced Notes</h2>
+                <a id="downloadLink" href="#" class="download-btn" style="display: none;">↓ Download .md</a>
+            </div>
+            <div id="outputMarkdown"></div>
+        </div>
+
+        <!-- Future Capabilities Note -->
+        <div class="capability-note">
+            💡 <strong>Coming soon:</strong> Export to plain text, Excel, Word, and PDF.  
+            Already capable of processing images and documents — more formats on the way!
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script>
+        // === Reset Everything on Page Load ===
+        document.addEventListener("DOMContentLoaded", () => {
+            const fileInput = document.getElementById("fileInput");
+            const filePreview = document.getElementById("filePreview");
+            const statusPanel = document.getElementById("statusPanel");
+            const results = document.getElementById("results");
+            const downloadLink = document.getElementById("downloadLink");
+            const stepUpload = document.getElementById("step-upload");
+
+            // Clear file input
+            if (fileInput) fileInput.value = "";
+
+            // Reset preview
+            if (filePreview) {
+                filePreview.innerHTML = "<em>No file uploaded yet.</em>";
+            }
+
+            // Hide status & results
+            if (statusPanel) statusPanel.style.display = "none";
+            if (results) results.style.display = "none";
+            if (downloadLink) downloadLink.style.display = "none";
+            if (stepUpload) stepUpload.innerHTML = "⚪ Waiting to upload...";
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        });
+
+        // === Request notification permission ===
+        if ("Notification" in window) {
+            Notification.requestPermission();
+        }
+
+        // === Show browser notification ===
+        function showNotification(title, body) {
+            if ("Notification" in window && Notification.permission === "granted") {
+                new Notification(title, {
+                    body: body,
+                    icon: "/static/images/windsorCoatofArms.png"
+                });
+            }
+        }
+
+        // === Trigger file download ===
+        function downloadFile(url, filename) {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // === Update file preview ===
+        function updatePreview(file) {
+            const preview = document.getElementById("filePreview");
+            const ext = file.name.toLowerCase().split('.').pop();
+            const reader = new FileReader();
+
+            preview.innerHTML = "";
+
+            if (file.type.startsWith('image/')) {
+                reader.onload = () => {
+                    preview.innerHTML = `<img src="${reader.result}" alt="Preview" />`;
+                };
+                reader.readAsDataURL(file);
+            } else if (ext === 'txt') {
+                reader.onload = () => {
+                    preview.innerHTML = `<pre>${reader.result}</pre>`;
+                };
+                reader.readAsText(file);
+            } else {
+                preview.innerHTML = `<p><strong>${file.name}</strong> (${ext.toUpperCase()})</p>
+                                    <p>Preview not available.</p>`;
+            }
+        }
+
+        // === Handle form submission ===
+        document.getElementById("uploadForm").onsubmit = async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById("fileInput");
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            // Show preview
+            updatePreview(file);
+
+            // Show status panel
+            document.getElementById("statusPanel").style.display = "block";
+            document.getElementById("results").style.display = "none";
+            document.getElementById("downloadLink").style.display = "none";
+
+            const btn = e.target.querySelector("button");
+            btn.disabled = true;
+            btn.textContent = "Processing...";
+
+            // Update status
+            document.getElementById("step-upload").innerHTML = `✅ File uploaded: <em>${file.name}</em>`;
+
+            try {
+                const formData = new FormData(e.target);
+                const res = await fetch("/api/process", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const data = await res.json();
+                const result = data.results[0];
+
+                // Update steps
+                document.getElementById("step-extract").innerText = "✅ Text extracted";
+                document.getElementById("step-ai").innerText = "✅ AI processed notes";
+                document.getElementById("step-done").innerText = "✅ Done!";
+
+                const outputDiv = document.getElementById("outputMarkdown");
+                if (result.status === "success") {
+                    const cleanedNotes = result.enhanced_notes
+                        .replace(/```markdown/g, '')
+                        .replace(/```/g, '')
+                        .trim();
+
+                    outputDiv.innerHTML = `<pre><code>${cleanedNotes}</code></pre>`;
+
+                    // Setup download
+                    const blob = new Blob([cleanedNotes], { type: 'text/markdown;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const baseName = file.name.replace(/\.[^/.]+$/, "");
+                    const filename = `${baseName}.md`;
+
+                    const dlLink = document.getElementById("downloadLink");
+                    dlLink.href = url;
+                    dlLink.download = filename;
+                    dlLink.style.display = "inline-block";
+                    dlLink.onclick = (e) => {
+                        e.preventDefault();
+                        downloadFile(url, filename);
+                    };
+
+                    // Send notification
+                    showNotification("✅ NoteBot: Processing Complete", `Enhanced notes for ${file.name} are ready!`);
+                } else {
+                    outputDiv.innerHTML = `<p class="error">❌ ${result.error}</p>`;
+                    showNotification("⚠️ NoteBot: Failed", result.error.substring(0, 50) + "...");
+                }
+
+                document.getElementById("results").style.display = "block";
+
+            } catch (err) {
+                document.getElementById("step-ai").innerText = "❌ AI failed";
+                document.getElementById("outputMarkdown").innerHTML = `<p class="error"><strong>Error:</strong> ${err.message}</p>`;
+                document.getElementById("results").style.display = "block";
+                showNotification("❌ NoteBot: Error", "Processing failed. Check connection.");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Enhance Notes with AI";
+            }
+        };
+    </script>
+</body>
+</html>

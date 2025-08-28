@@ -1,0 +1,36 @@
+# NoteBot Web Application Requirements
+
+# Core Flask dependencies
+Flask==3.0.0
+Flask-CORS==4.0.0
+Werkzeug==3.0.1
+
+# File processing
+mammoth==1.6.0  # Word document processing
+PyPDF2==3.0.1   # PDF processing
+Pillow==10.1.0  # Image processing
+
+# Optional image preprocessing
+opencv-python==4.8.1.78  # Image cleanup for handwriting
+
+# HTTP requests for Ollama API
+requests==2.31.0
+
+
+# Development dependencies
+python-dotenv==1.0.0  # Environment variables
+
+# Security - use latest compatible version
+cryptography>=41.0.0  # Security library
+
+# Async processing (optional)
+# celery==5.3.4  # For background task processing (commented out - not needed for basic setup)
+# redis==5.0.1   # Task queue backend (commented out - not needed for basic setup)
+
+# Logging and monitoring
+structlog==23.2.0
+
+# Production server
+gunicorn==21.2.0
+
+python-docx

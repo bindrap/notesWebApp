@@ -1,0 +1,14 @@
+[2025-08-28 09:12:56] INFO: 🚀 Starting NoteBot Web Application (One-Click Mode)
+[2025-08-28 09:12:56] INFO: 📁 Project Root: c:\Users\bindrap\Documents\notesWebApp
+[2025-08-28 09:12:56] INFO: 🔍 Checking Python Version...
+[2025-08-28 09:12:56] INFO: ✅ Python 3.11.9 - OK
+[2025-08-28 09:12:56] INFO: 🔍 Checking Dependencies...
+[2025-08-28 09:12:56] INFO: ✅ Flask (flask) - OK
+[2025-08-28 09:12:56] INFO: ✅ Flask-CORS (flask_cors) - OK
+[2025-08-28 09:12:56] INFO: ✅ requests (requests) - OK
+[2025-08-28 09:12:56] INFO: ✅ mammoth (mammoth) - OK
+[2025-08-28 09:12:56] INFO: ✅ PyPDF2 (PyPDF2) - OK
+[2025-08-28 09:12:56] INFO: ✅ Pillow (PIL) - OK
+[2025-08-28 09:12:56] INFO: ✅ Werkzeug (werkzeug) - OK
+[2025-08-28 09:12:56] INFO: ✅ python-docx (docx) - OK
+[2025-08-28 09:12:56] INFO: 🔍 Checking Ollama Service...

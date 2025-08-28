@@ -1,0 +1,7 @@
+[2025-08-27 16:33:15] INFO: ✅ Successfully installed qwen3:4b
+[2025-08-27 16:33:15] INFO: 🔍 Checking HTML Template...
+[2025-08-27 16:33:15] INFO: ✅ HTML template exists - OK
+[2025-08-27 16:33:15] INFO: 🎉 All systems go! Launching NoteBot...
+[2025-08-27 16:33:15] INFO: 📁 Loaded app from: c:\Users\bindrap\Documents\notesWebApp\app.py
+[2025-08-27 16:33:15] ERROR: ❌ The 'app.py' file must define 'app = Flask(__name__)'
+[2025-08-27 16:33:15] INFO: 💡 Example: from flask import Flask; app = Flask(__name__)

@@ -1,0 +1,8 @@
+[2025-08-28 09:11:07] INFO: ✅ Flask (flask) - OK
+[2025-08-28 09:11:07] INFO: ✅ Flask-CORS (flask_cors) - OK
+[2025-08-28 09:11:07] INFO: ✅ requests (requests) - OK
+[2025-08-28 09:11:07] INFO: ✅ mammoth (mammoth) - OK
+[2025-08-28 09:11:07] INFO: ✅ PyPDF2 (PyPDF2) - OK
+[2025-08-28 09:11:07] INFO: ✅ Pillow (PIL) - OK
+[2025-08-28 09:11:07] INFO: ✅ Werkzeug (werkzeug) - OK
+[2025-08-28 09:11:07] INFO: 🔍 Checking Ollama Service...

@@ -1,0 +1,24 @@
+[2025-08-27 16:27:34] INFO: 🚀 Starting NoteBot Web Application...
+[2025-08-27 16:27:34] INFO: 📁 Project root: c:\Users\bindrap\Documents\notesWebApp
+[2025-08-27 16:27:34] INFO: 🔍 Checking Python version...
+[2025-08-27 16:27:34] INFO: Python 3.11.9 - OK
+[2025-08-27 16:27:34] INFO: 🔍 Checking Python dependencies...
+[2025-08-27 16:27:35] INFO: Package flask (flask) - OK
+[2025-08-27 16:27:35] INFO: Package flask_cors (flask_cors) - OK
+[2025-08-27 16:27:35] INFO: Package requests (requests) - OK
+[2025-08-27 16:27:35] INFO: Package mammoth (mammoth) - OK
+[2025-08-27 16:27:35] INFO: Package PyPDF2 (PyPDF2) - OK
+[2025-08-27 16:27:35] INFO: Package Pillow (PIL) - OK
+[2025-08-27 16:27:35] INFO: Package werkzeug (werkzeug) - OK
+[2025-08-27 16:27:35] INFO: All Python dependencies - OK
+[2025-08-27 16:27:35] INFO: 🔍 Checking Ollama service...
+[2025-08-27 16:27:38] INFO: Ollama service - OK
+[2025-08-27 16:27:38] INFO: 🔍 Checking Required AI models...
+[2025-08-27 16:27:40] INFO: Model qwen2.5vl:7b (Image OCR processing) - OK
+[2025-08-27 16:27:40] WARN: Model qwen3:4b not found. Installing...
+[2025-08-27 16:27:41] INFO: Successfully installed qwen3:4b
+[2025-08-27 16:27:41] INFO: 🔍 Checking HTML template...
+[2025-08-27 16:27:41] INFO: Created minimal HTML template
+[2025-08-27 16:27:41] INFO: ✅ All startup checks passed!
+[2025-08-27 16:27:41] INFO: Starting NoteBot in development mode on 0.0.0.0:5000
+[2025-08-27 16:27:41] ERROR: Failed to start Flask app: module 'app' has no attribute 'app'

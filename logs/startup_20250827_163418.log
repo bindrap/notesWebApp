@@ -1,0 +1,5 @@
+[2025-08-27 16:34:18] INFO: ✅ mammoth (mammoth) - OK
+[2025-08-27 16:34:18] INFO: ✅ PyPDF2 (PyPDF2) - OK
+[2025-08-27 16:34:18] INFO: ✅ Pillow (PIL) - OK
+[2025-08-27 16:34:18] INFO: ✅ Werkzeug (werkzeug) - OK
+[2025-08-27 16:34:18] INFO: 🔍 Checking Ollama Service...
