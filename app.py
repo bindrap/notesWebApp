@@ -32,7 +32,7 @@ for folder in [uploads_dir, outputs_dir, temp_dir, logs_dir]:
 # Ollama config
 OLLAMA_HOST = "http://localhost:11434"
 VISION_MODEL = "qwen2.5vl:7b"   # For OCR (images)
-TEXT_MODEL = "phi3:mini"            #"qwen3:4b"         # For structuring notes
+TEXT_MODEL = "phi3:mini"         #"phi3:mini"  #"qwen3:4b"         # For structuring notes
 TEMPERATURE = 0.1
 
 # === FLASK APP ===
@@ -93,142 +93,66 @@ def image_to_text_ocr(image_path: Path) -> str:
 
 def text_to_project_notes(raw_text: str) -> str:
     """
-    Converts raw notes into a clean, structured markdown project plan.
-    Uses a strict prompt + post-processing to guarantee format.
+    Uses a smart AI to turn raw notes into polished, insightful markdown.
+    Focuses on clarity, next steps, and professional tone.
     """
     try:
-        # 🎯 Simple, direct prompt — no room for AI to "think"
-        prompt = f"""
-You are a markdown-only assistant that creates project plans.
-Follow these rules:
-- Start with "# Project Title"
-- Include exactly these sections in order:
-  ## Goals / Objectives
-  ## Key Features or Deliverables
-  ...
-- Output ONLY the raw markdown — no explanations, no commentary
-- Do NOT wrap the output in ```markdown or any code block
-- Do NOT include triple backticks (```)
-- If information is missing, make reasonable assumptions
+        prompt = f"""<|im_start|>system
+You are a senior project assistant with 10+ years of experience.
+Your job is to transform messy, incomplete notes into clear, actionable, professional documents.
 
-Raw notes:
+Do NOT use templates or fixed sections.
+Instead, use your judgment to structure the output based on the content.
+
+You MUST:
+- Do not include thinking in the project notes output, user just want notes not thinking attached
+- Preserve all key information
+- Clarify ambiguous points with reasonable assumptions
+- Add logical structure (headings, lists, etc.)
+- Include a "Next Steps" section at the end
+- Use markdown formatting appropriately
+- Write in a professional but conversational tone
+- NEVER say 'thinking', 'note', or 'here is the plan'
+- Output ONLY the enhanced notes — nothing else
+
+Now enhance these raw notes:
+<|im_end|>
+
+<|im_start|>user
 {raw_text}
+<|im_end|>
 
-Now write the plan:
-# Project Title
+<|im_start|>assistant
 """
 
         payload = {
             "model": TEXT_MODEL,
             "prompt": prompt,
             "stream": False,
-            "options": {"temperature": 0.1, "num_ctx": 4096}
+            "options": {"temperature": TEMPERATURE, "num_ctx": 8192}
         }
 
-        # 📡 Send to Ollama
         response = requests.post(f"{OLLAMA_HOST}/api/generate", json=payload, timeout=600)
         response.raise_for_status()
-        ai_output = response.json().get("response", "").strip()
+        enhanced = response.json().get("response", "").strip()
 
-        # 🧹 CLEANING: Extract from "# Project Title" if needed
-        start_idx = ai_output.find("# Project Title")
-        if start_idx != -1:
-            ai_output = ai_output[start_idx:]
+        # Clean up any accidental prefixes
+        enhanced = re.sub(r"^(Here is|The|Below is|Enhanced version).*?\n", "", enhanced, flags=re.IGNORECASE | re.MULTILINE).strip()
 
-        # 🔍 Normalize section headers
-        lines = [line.strip() for line in ai_output.splitlines() if line.strip()]
+        # Ensure there's a "Next Steps" or "Action Items" section
+        if not re.search(r"##\s*(Next Steps|Action Items|To-Do|What's Next)", enhanced, re.IGNORECASE):
+            enhanced += "\n\n## Next Steps\n- Review and confirm action items\n- Assign owners and deadlines"
 
-        # 🏗️ Rebuild with guaranteed structure
-        final_lines = []
-        seen_sections = {"Project Title": False}
-        current_section = None
-
-        # Track required sections
-        required_sections = [
-            "Goals / Objectives",
-            "Key Features or Deliverables",
-            "Tasks and Steps",
-            "Estimated Timeline / Deadlines",
-            "Resources / Tools Needed",
-            "Potential Risks / Challenges",
-            "Next Actions"
-        ]
-
-        # First, add title (must be first)
-        title_lines = []
-        for line in lines:
-            if line.startswith("# "):
-                continue  # skip header line, we'll add it
-            if line.startswith("## "):
-                break
-            title_lines.append(f"- {line}" if not line.startswith(("-", "*")) else line)
-        final_lines.append("# Project Title")
-        final_lines.extend(title_lines or ["- Project enhancement"])
-
-        # Then, process each required section
-        for section in required_sections:
-            header = f"## {section}"
-            content = []
-
-            # Look for this section in AI output
-            in_section = False
-            for line in lines:
-                if line == header:
-                    in_section = True
-                    continue
-                if in_section and line.startswith("## "):
-                    break  # next section
-                if in_section:
-                    if line.startswith("- ") or line.startswith("* ") or line[0].isdigit():
-                        content.append(line)
-                    else:
-                        content.append(f"- {line}")
-
-            # Add section (even if empty)
-            final_lines.append(header)
-            final_lines.extend(content or [f"- {placeholder_text[section]}"])
-            
-        return "\n".join(final_lines)
+        return enhanced
 
     except Exception as e:
-        # 🛡️ Fallback: return clean markdown even on error
-        return f"""# Project Title
-- AI Processing Failed
+        return f"""# Note Enhancement Failed
 
-## Goals / Objectives
-- Input too large or model unreachable
+The AI could not process your notes.
 
-## Key Features or Deliverables
-- Check Ollama and retry
+**Error:** {str(e)}
 
-## Tasks and Steps
-- Reduce input size
-- Try simpler model
-
-## Estimated Timeline / Deadlines
-- Immediate
-
-## Resources / Tools Needed
-- Stable connection to Ollama
-
-## Potential Risks / Challenges
-- Timeout or model crash
-
-## Next Actions
-- Retry with shorter input
-"""
-
-
-# 📝 Placeholders for missing sections
-placeholder_text = {
-    "Goals / Objectives": "Define the main purpose and goals.",
-    "Key Features or Deliverables": "List expected outputs or features.",
-    "Tasks and Steps": "Break down the work into steps.",
-    "Estimated Timeline / Deadlines": "Set realistic deadlines.",
-    "Resources / Tools Needed": "Identify required tools or access.",
-    "Potential Risks / Challenges": "Note possible obstacles.",
-    "Next Actions": "List immediate next steps."
-}
+Please try again with a shorter note or check the Ollama service."""
 
 
 def extract_text(filepath):

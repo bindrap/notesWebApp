@@ -1,0 +1,7 @@
+[2025-08-28 12:36:52] INFO: ✅ Successfully installed qwen3:4b
+[2025-08-28 12:36:52] INFO: 🔍 Checking HTML Template...
+[2025-08-28 12:36:52] INFO: ✅ HTML template exists - OK
+[2025-08-28 12:36:52] INFO: 🎉 All systems go! Launching NoteBot...
+[2025-08-28 12:36:52] INFO: 📁 Loaded app from: c:\Users\bindrap\Documents\notesWebApp\app.py
+[2025-08-28 12:36:52] INFO: 🚀 Starting NoteBot web server on http://localhost:5000
+[2025-08-28 12:36:52] INFO: 💡 Press CTRL+C to stop

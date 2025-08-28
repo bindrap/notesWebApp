@@ -1,0 +1,8 @@
+[2025-08-28 12:22:16] INFO: 🚀 Starting NoteBot Web Application (One-Click Mode)
+[2025-08-28 12:22:16] INFO: 📁 Project Root: c:\Users\bindrap\Documents\notesWebApp
+[2025-08-28 12:22:16] INFO: 🔍 Checking Python Version...
+[2025-08-28 12:22:16] INFO: ✅ Python 3.11.9 - OK
+[2025-08-28 12:22:16] INFO: 🔍 Checking Dependencies...
+[2025-08-28 12:22:16] INFO: ✅ Flask (flask) - OK
+[2025-08-28 12:22:16] INFO: ✅ Flask-CORS (flask_cors) - OK
+[2025-08-28 12:22:16] INFO: ✅ requests (requests) - OK
